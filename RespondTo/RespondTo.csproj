@@ -44,6 +44,7 @@
   <ItemGroup>
     <Compile Include="ControllerExtensions.cs" />
     <Compile Include="MultiMimeFormat.cs" />
+    <Compile Include="MultiMimeResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
