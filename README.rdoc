@@ -1,5 +1,7 @@
 = Ruby On Rails respond_to analog for ASP.NET MVC
 
+NuGet project: https://nuget.org/packages/Mvc.RespondTo
+
 == Description
 
 This library provides RoR like respond_to extension method to your controllers.
@@ -7,7 +9,8 @@ In short *RespondTo* allows your actions to respond with different data format (
 
 == Installation and usage
 
-_TODO: Create NuGet package and add notes here_
+To install Mvc.RespondTo, run the following command in the {Package Manager Console}[http://docs.nuget.org/docs/start-here/using-the-package-manager-console]
+    PM> Install-Package Mvc.RespondTo
 
 To start using it you don't have to inherit anything. Just include namespace *Mvc.RespondTo* and your controller will have *RespondTo* extension method.
 
