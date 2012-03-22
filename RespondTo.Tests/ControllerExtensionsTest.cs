@@ -1,5 +1,6 @@
 ﻿using System.Web.Mvc;
 using Moq;
+using Mvc.RespondTo.MultiMime;
 using NUnit.Framework;
 
 namespace Mvc.RespondTo.Tests

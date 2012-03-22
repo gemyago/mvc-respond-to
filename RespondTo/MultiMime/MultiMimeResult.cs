@@ -1,7 +1,7 @@
 using System;
 using System.Web.Mvc;
 
-namespace Mvc.RespondTo
+namespace Mvc.RespondTo.MultiMime
 {
     public class MultiMimeResult : ActionResult
     {

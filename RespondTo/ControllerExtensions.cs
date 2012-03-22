@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Web.Mvc;
+using Mvc.RespondTo.MultiMime;
 
 namespace Mvc.RespondTo
 {
