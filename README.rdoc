@@ -3,31 +3,90 @@
 == Description
 
 This library provides RoR like respond_to extension method to your controllers.
-In short respond_to allows your actions to respond with different data format (like xml or json) based on HTTP Accept header submitted by the client.
+In short *RespondTo* allows your actions to respond with different data format (like xml or json) based on *HTTP Accept* header submitted by the client.
 
-== SYNOPSIS
+== Installation and usage
 
-Sample Rails action looks like:
+_TODO: Create NuGet package and add notes here_
 
-    def index
-      @people = Person.all
+To start using it you don't have to inherit anything. Just include namespace *Mvc.RespondTo* and your controller will have *RespondTo* extension method.
 
-      respond_to do |format|
-        format.html
-        format.json { render :json => @people.to_json }
-      end
-    end
-    
-In short it is: "if the client wants HTML in response to this action, just respond in default way (render index.html.erb). But if the client wants JSON, return them the list of people in JSON format."
-
-ASP.NET MVC action powered with the extension:
+== SYNOPSIS    
 
     public ActionResult Index()
     {
-        var people = ...; //Load people...
+        var people = new List<string> {"Larry", "Garry", "Sam"};
         return this.RespondTo(format =>
         {
             format.Html(() => View(people));
             format.Json(() => Json(people));
         });
     }
+
+In short it is: "if the client wants HTML in response to this action, just respond in default way. But if the client wants JSON, return a list of people in JSON format."
+
+See complete sample {here}[https://github.com/evgeny-myasishchev/mvc-respond-to/blob/master/RespondTo.Tests/Samples/PeopleController.cs]
+
+== Handle some specific MIME type
+
+    public ActionResult Index()
+    {
+        var people = new List<string> {"Larry", "Garry", "Sam"};
+        return this.RespondTo(format =>
+        {
+            ..........
+
+            //Handling custom mime type
+            format.Mime("text/plain", () => Content(string.Join(", ", people)));
+        });
+    }
+
+== Adding reusable formats
+
+Often you need respond to some formats in several actions. For this purpose you need to just add an extension method to MultiMimeFormat class that may look something like this:
+    public static class MultiMimeFormatExtensions
+    {
+        public static void Pdf(this MultiMimeFormat format, Func<ActionResult> responder)
+        {
+            format.Mime("text/pdf", responder);
+        }
+    }
+
+Then you can use your *Pdf* extension like this:
+    public ActionResult Index()
+    {
+        var people = new List<string> {"Larry", "Garry", "Sam"};
+        return this.RespondTo(format =>
+        {
+            ..........
+
+            format.Pdf(() => ...Return ActionResult that renders PDF...);
+        });
+    }
+
+== Writing unit tests
+
+RespondTo returns MultiMimeResult that is just an instance of ActionResult. It has a Format property which is an instance of MultiMimeFormat and holds all your registered responders.
+Sample test of index action (written with NUnit) is below:
+
+    [Test]
+    public void TestIndex()
+    {
+        var controller = new PeopleController();
+        var result = controller.Index();
+        Assert.That(result, Is.InstanceOf<MultiMimeResult>());
+        var multiMimeResult = (MultiMimeResult)result;
+    
+        var jsonResult = (JsonResult)multiMimeResult.Format.ResultFor("application/json");
+        Assert.That(jsonResult.Data, Is.Not.Null);
+        Assert.That(jsonResult.Data, Is.InstanceOf<IEnumerable<string>>());
+    
+        var viewResult = (ViewResult)multiMimeResult.Format.ResultFor("text/html");
+        Assert.That(viewResult.Model, Is.Not.Null);
+        Assert.That(viewResult.Model, Is.InstanceOf<IEnumerable<string>>());
+    
+        var textResult = (ContentResult)multiMimeResult.Format.ResultFor("text/plain");
+        Assert.That(textResult.Content, Is.EqualTo("Larry, Garry, Sam"));
+    }
+
+Full source code of a sample controller is {here}[https://github.com/evgeny-myasishchev/mvc-respond-to/blob/master/RespondTo.Tests/Samples/PeopleController.cs] and for the test is {here}[https://github.com/evgeny-myasishchev/mvc-respond-to/blob/master/RespondTo.Tests/Samples/PeopleControllerTest.cs].
