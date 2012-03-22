@@ -1,0 +1,33 @@
+= Ruby On Rails respond_to analog for ASP.NET MVC
+
+== Description
+
+This library provides RoR like respond_to extension method to your controllers.
+In short respond_to allows your actions to respond with different data format (like xml or json) based on HTTP Accept header submitted by the client.
+
+== SYNOPSIS
+
+Sample Rails action looks like:
+
+    def index
+      @people = Person.all
+
+      respond_to do |format|
+        format.html
+        format.json { render :json => @people.to_json }
+      end
+    end
+    
+In short it is: "if the client wants HTML in response to this action, just respond in default way (render index.html.erb). But if the client wants JSON, return them the list of people in JSON format."
+
+ASP.NET MVC action powered with the extension:
+
+    public ActionResult Index()
+    {
+        var people = ...; //Load people...
+        return this.RespondTo(format =>
+        {
+            format.Html(() => View(people));
+            format.Json(() => Json(people));
+        });
+    }
