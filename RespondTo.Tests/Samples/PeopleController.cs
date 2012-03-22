@@ -15,6 +15,9 @@ namespace Mvc.RespondTo.Tests.Samples
 
                 //Handling custom mime type
                 format.Mime("text/plain", () => Content(string.Join(", ", people)));
+
+                //Using extension method
+                format.Pdf(() => new EmptyResult());
             });
         }
     }
