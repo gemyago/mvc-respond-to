@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>evgeny.myasishchev@gmail.com</authors>
+    <owners>evgeny.myasishchev@gmail.com</owners>
+    <licenseUrl>http://www.opensource.org/licenses/mit-license.html</licenseUrl>
+    <projectUrl>https://github.com/evgeny-myasishchev/mvc-respond-to</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <releaseNotes>RespondTo extension method.</releaseNotes>
+    <copyright>Copyright Evgeny Myasishchev 2012</copyright>
+  </metadata>
+</package>
