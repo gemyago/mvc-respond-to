@@ -21,6 +21,7 @@ namespace Mvc.RespondTo.MultiMime
         }
 
         private readonly IDictionary<string, Func<ActionResult>> _respondersByMime = new Dictionary<string, Func<ActionResult>>();
+        private Func<ControllerContext, ActionResult> _resolveHook;
 
 
         /// <summary>
@@ -28,7 +29,7 @@ namespace Mvc.RespondTo.MultiMime
         /// </summary>
         /// <param name="mimeTypes">MIME types to return ActionResult for.</param>
         /// <returns></returns>
-        public ActionResult ResultFor(params string[] mimeTypes)
+        public ActionResult ResolveResult(params string[] mimeTypes)
         {
 
             var responder = (from mimeType in mimeTypes
@@ -38,14 +39,42 @@ namespace Mvc.RespondTo.MultiMime
             return responder();
         }
 
+        [Obsolete("Please use ResolveActionResult instead")]
+        public ActionResult ResultFor(params string[] mimeTypes)
+        {
+            return ResolveResult(mimeTypes);
+        }
+
         /// <summary>
         /// Returns ActionResult for controller context.
         /// </summary>
         /// <param name="context">Context of the controller.</param>
         /// <returns></returns>
+        public ActionResult ResolveResult(ControllerContext context)
+        {
+            if (_resolveHook != null)
+            {
+                var hookResult = _resolveHook.Invoke(context);
+                if (hookResult != null) return hookResult;
+            }
+            return ResolveResult(context.HttpContext.Request.AcceptTypes);
+        }
+
+        /// <summary>
+        /// Injects hook into the result resolution. 
+        /// The hook Func is used to tweak result resolution logic. For example it may resolve some specific mime based on query params.
+        /// If the hook Func returns null then default resolution logic will be used.
+        /// </summary>
+        /// <param name="hook"></param>
+        public void WithResolveHook(Func<ControllerContext, ActionResult> hook)
+        {
+            _resolveHook = hook;
+        }
+
+        [Obsolete("Please use ResolveActionResult instead")]
         public ActionResult ResultFor(ControllerContext context)
         {
-            return ResultFor(context.HttpContext.Request.AcceptTypes);
+            return ResolveResult(context);
         }
 
         /// <summary>

@@ -16,15 +16,15 @@ namespace Mvc.RespondTo.Tests.Samples
             Assert.That(result, Is.InstanceOf<MultiMimeResult>());
             var multiMimeResult = (MultiMimeResult)result;
 
-            var jsonResult = (JsonResult)multiMimeResult.Format.ResultFor("application/json");
+            var jsonResult = (JsonResult)multiMimeResult.Format.ResolveResult("application/json");
             Assert.That(jsonResult.Data, Is.Not.Null);
             Assert.That(jsonResult.Data, Is.InstanceOf<IEnumerable<string>>());
 
-            var viewResult = (ViewResult)multiMimeResult.Format.ResultFor("text/html");
+            var viewResult = (ViewResult)multiMimeResult.Format.ResolveResult("text/html");
             Assert.That(viewResult.Model, Is.Not.Null);
             Assert.That(viewResult.Model, Is.InstanceOf<IEnumerable<string>>());
 
-            var textResult = (ContentResult)multiMimeResult.Format.ResultFor("text/plain");
+            var textResult = (ContentResult)multiMimeResult.Format.ResolveResult("text/plain");
             Assert.That(textResult.Content, Is.EqualTo("Larry, Garry, Sam"));
         }
     }

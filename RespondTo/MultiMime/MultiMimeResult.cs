@@ -19,7 +19,7 @@ namespace Mvc.RespondTo.MultiMime
 
         public override void ExecuteResult(ControllerContext context)
         {
-            Format.ResultFor(context).ExecuteResult(context);
+            Format.ResolveResult(context).ExecuteResult(context);
         }
     }
 }
