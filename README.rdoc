@@ -76,7 +76,8 @@ Resolve hook can be uesd if for example you need to render PDF based on some que
         {
             format.WithResolveHook(context =>
             {
-                if (context.HttpContext.Request.QueryString["pdf"] == "true") return format.ResolveResult("application/pdf");
+                if (context.HttpContext.Request.QueryString["pdf"] == "true") 
+                    return format.ResolveResult("application/pdf");
                 return null;
             });
             format.Mime("application/pdf", responder);
