@@ -8,7 +8,12 @@ namespace Mvc.RespondTo.Tests.Samples
     {
         public static void Pdf(this MultiMimeFormat format, Func<ActionResult> responder)
         {
-            format.Mime("text/pdf", responder);
+            format.WithResolveHook(context =>
+            {
+                if (context.HttpContext.Request.QueryString["pdf"] == "true") return format.ResolveResult("application/pdf");
+                return null;
+            });
+            format.Mime("application/pdf", responder);
         }
     }
 }
