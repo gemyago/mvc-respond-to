@@ -66,6 +66,22 @@ Then you can use your *Pdf* extension like this:
             format.Pdf(() => ...Return ActionResult that renders PDF...);
         });
     }
+    
+== Customizing resolution logic
+
+Resolve hook can be uesd if for example you need to render PDF based on some query string key:
+    public static class MultiMimeFormatExtensions
+    {
+        public static void Pdf(this MultiMimeFormat format, Func<ActionResult> responder)
+        {
+            format.WithResolveHook(context =>
+            {
+                if (context.HttpContext.Request.QueryString["pdf"] == "true") return format.ResolveResult("application/pdf");
+                return null;
+            });
+            format.Mime("application/pdf", responder);
+        }
+    }
 
 == Writing unit tests
 
