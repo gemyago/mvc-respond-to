@@ -20,7 +20,8 @@ namespace Mvc.RespondTo.MultiMime
             initializer(this);
         }
 
-        private readonly List<Func<string[], Func<ActionResult>>> _responderLocators = new List<Func<string[], Func<ActionResult>>>();
+        private readonly IDictionary<string, Func<ActionResult>> _respondersByMime = new Dictionary<string, Func<ActionResult>>();
+
 
         /// <summary>
         /// Returns ActionResult for a particular MIME type
@@ -29,14 +30,11 @@ namespace Mvc.RespondTo.MultiMime
         /// <returns></returns>
         public ActionResult ResultFor(params string[] mimeTypes)
         {
-            Func<ActionResult> responder = null;
-            foreach (var resultLocator in _responderLocators)
-            {
-                responder = resultLocator(mimeTypes);
-                if (responder != null) break;
-            }
-            if (responder == null)
-                throw new HttpException(406, "Not Acceptable.");
+
+            var responder = (from mimeType in mimeTypes
+                             where _respondersByMime.ContainsKey(mimeType)
+                             select _respondersByMime[mimeType]).FirstOrDefault();
+            if (responder == null) throw new HttpException(406, "Not Acceptable.");
             return responder();
         }
 
@@ -58,8 +56,8 @@ namespace Mvc.RespondTo.MultiMime
         /// <param name="canRespondToAll">true means that responder can respond to */*</param>
         public void Mime(string mimeType, Func<ActionResult> responder, bool canRespondToAll = false)
         {
-            _responderLocators
-                .Add(acceptTypes => acceptTypes.Any(type => type == "*/*" && canRespondToAll || type == mimeType) ? responder : null);
+            _respondersByMime.Add(mimeType, responder);
+            if (canRespondToAll) _respondersByMime.Add("*/*", responder);
         }
 
         /// <summary>
