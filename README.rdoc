@@ -51,7 +51,7 @@ Often you need respond to some formats in several actions. For this purpose you 
     {
         public static void Pdf(this MultiMimeFormat format, Func<ActionResult> responder)
         {
-            format.Mime("text/pdf", responder);
+            format.Mime("application/pdf", responder);
         }
     }
 
