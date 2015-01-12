@@ -39,12 +39,6 @@ namespace Mvc.RespondTo.MultiMime
             return responder();
         }
 
-        [Obsolete("Please use ResolveResult instead")]
-        public ActionResult ResultFor(params string[] mimeTypes)
-        {
-            return ResolveResult(mimeTypes);
-        }
-
         /// <summary>
         /// Returns ActionResult for controller context.
         /// </summary>
@@ -69,12 +63,6 @@ namespace Mvc.RespondTo.MultiMime
         public void WithResolveHook(Func<ControllerContext, ActionResult> hook)
         {
             _resolveHook = hook;
-        }
-
-        [Obsolete("Please use ResolveResult instead")]
-        public ActionResult ResultFor(ControllerContext context)
-        {
-            return ResolveResult(context);
         }
 
         /// <summary>
