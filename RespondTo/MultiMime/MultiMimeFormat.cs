@@ -11,6 +11,8 @@ namespace Mvc.RespondTo.MultiMime
     /// </summary>
     public class MultiMimeFormat
     {
+        private const string MimeAll = "*/*";
+
         public MultiMimeFormat()
         {
         }
@@ -34,8 +36,11 @@ namespace Mvc.RespondTo.MultiMime
             Func<ActionResult> responder;
             if (mimeTypes == null || ((responder = (from mimeType in mimeTypes
                                                     where _respondersByMime.ContainsKey(mimeType)
-                                                    select _respondersByMime[mimeType]).FirstOrDefault()) == null)) 
-                throw new HttpException(406, "Not Acceptable.");
+                                                    select _respondersByMime[mimeType]).FirstOrDefault()) == null))
+            {
+                if (_respondersByMime.ContainsKey(MimeAll)) responder = _respondersByMime[MimeAll];
+                else throw new HttpException(406, "Not Acceptable.");
+            }
             return responder();
         }
 
@@ -74,7 +79,7 @@ namespace Mvc.RespondTo.MultiMime
         public void Mime(string mimeType, Func<ActionResult> responder, bool canRespondToAll = false)
         {
             _respondersByMime.Add(mimeType, responder);
-            if (canRespondToAll) _respondersByMime.Add("*/*", responder);
+            if (canRespondToAll) _respondersByMime.Add(MimeAll, responder);
         }
 
         /// <summary>
@@ -102,6 +107,16 @@ namespace Mvc.RespondTo.MultiMime
         public void Xml(Func<ActionResult> responder)
         {
             Mime("application/xml", responder);
+        }
+
+        /// <summary>
+        /// Register a responder for all MIME types. It will be called if no other MIME responders.
+        /// </summary>
+        /// <param name="responder"></param>
+        public void All(Func<ActionResult> responder)
+        {
+            if (_respondersByMime.ContainsKey(MimeAll)) _respondersByMime.Remove(MimeAll);
+            Mime(MimeAll, responder);
         }
     }
 }

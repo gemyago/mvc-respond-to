@@ -49,11 +49,36 @@ namespace Mvc.RespondTo.Tests
         }
 
         [Test]
-        public void TestMimeAll()
+        public void TestMimeAllPresent()
         {
             var textHtml = new ViewResult();
             _format.Mime("text/html", () => textHtml, true);
             Assert.That(_format.ResolveResult("*/*", "application/xml"), Is.EqualTo(textHtml));
+        }
+
+        [Test]
+        public void TestMimeAllOverridesHtml()
+        {
+            var allResult = new ViewResult();
+            var htmlResult = new ViewResult();
+            _format.Html(() => htmlResult);
+            _format.All(() => allResult);
+            Assert.That(_format.ResolveResult("text/html"), Is.EqualTo(htmlResult));
+            Assert.That(_format.ResolveResult("*/*"), Is.EqualTo(allResult));
+        }
+
+        [Test]
+        public void TestMimeAllReturnedIfNoSpecificResolverFound()
+        {
+            var allResult = new ViewResult();
+            var htmlResult = new EmptyResult();
+            _format.Html(() => htmlResult);
+            _format.All(() => allResult);
+            Assert.That(_format.ResolveResult("text/html"), Is.EqualTo(htmlResult));
+            Assert.That(_format.ResolveResult("*/*", "text/html"), Is.EqualTo(allResult));
+            Assert.That(_format.ResolveResult("*/*", "application/json"), Is.EqualTo(allResult));
+            Assert.That(_format.ResolveResult("application/json"), Is.EqualTo(allResult));
+            Assert.That(_format.ResolveResult((string[]) null), Is.EqualTo(allResult));
         }
 
         [Test]
