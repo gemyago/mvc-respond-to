@@ -31,11 +31,11 @@ namespace Mvc.RespondTo.MultiMime
         /// <returns></returns>
         public ActionResult ResolveResult(params string[] mimeTypes)
         {
-
-            var responder = (from mimeType in mimeTypes
-                             where _respondersByMime.ContainsKey(mimeType)
-                             select _respondersByMime[mimeType]).FirstOrDefault();
-            if (responder == null) throw new HttpException(406, "Not Acceptable.");
+            Func<ActionResult> responder;
+            if (mimeTypes == null || ((responder = (from mimeType in mimeTypes
+                                                    where _respondersByMime.ContainsKey(mimeType)
+                                                    select _respondersByMime[mimeType]).FirstOrDefault()) == null)) 
+                throw new HttpException(406, "Not Acceptable.");
             return responder();
         }
 

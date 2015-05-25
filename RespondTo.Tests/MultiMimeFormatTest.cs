@@ -40,6 +40,13 @@ namespace Mvc.RespondTo.Tests
             var exception = Assert.Throws<HttpException>(() => _format.ResolveResult("application/json"));
             Assert.That(exception.GetHttpCode(), Is.EqualTo(406));
         }
+        
+        [Test]
+        public void TestNullMime()
+        {
+            var exception = Assert.Throws<HttpException>(() => _format.ResolveResult((string[]) null));
+            Assert.That(exception.GetHttpCode(), Is.EqualTo(406));
+        }
 
         [Test]
         public void TestMimeAll()
